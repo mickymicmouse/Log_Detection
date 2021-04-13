@@ -52,6 +52,9 @@ model = Word2Vec(sentences = result, vector_size= 100, window = 5, min_count=5, 
 model_result = model.wv.most_similar("hot")
 print(model_result)
 
+#유사도 비교
+model.wv.similarity("x","x")
+
 # 모델 save & load
 from gensim.models import KeyedVectors
 model.wv.save_word2vec_format('eng_w2v')

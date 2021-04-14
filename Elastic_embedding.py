@@ -53,13 +53,19 @@ for i in range(len(df_acc_log)):
     res.append(sent)
 
 # 정수 인코딩
+from tensorflow.keras.preprocessing.text import Tokenizer
+tokenizer = Tokenizer(oov_token='OOV')
+tokenizer.fit_on_texts(sentences) # fit_on_texts()안에 코퍼스를 입력으로 하면 빈도수를 기준으로 단어 집합을 생성한다.
 
+print(tokenizer.word_index)
 
+tokenizer.texts_to_sequences(sentences)
 
-
-
-
-
+'''
+vocab_size = 5
+tokenizer = Tokenizer(num_words = vocab_size + 2, oov_token = 'OOV') # 상위 5개 단어만 사용
+tokenizer.fit_on_texts(sentences)
+'''
 
 
 # 워드 임베딩!

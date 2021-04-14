@@ -61,5 +61,20 @@ model.wv.save_word2vec_format('eng_w2v')
 loaded_model = KeyedVectors.load_word2vec_format('eng_w2v')
 
 
+# glove 훈련
+from glove import Corpus, Glove
+
+corpus = Corpus()
+corpus.fit(result, window = 5)
+
+glove = Glove(no_components = 100, learning_rate = 0.05)
+glove.fit(corpus.matrix, epochs = 20, no_threads=4, verbose=True)
+glove.add_dictionary(corpus.dictionary)
+
+glove.most_similar("hot")
 
 
+# 패스트 텍스트 훈련
+from gensim.models import FastText
+model = FastText(result, vector_size=100, window = 5, min_count=5, workers=4, sg=1)
+model_result =model.wv.most_similar("electorfi")

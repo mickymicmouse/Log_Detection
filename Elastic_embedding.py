@@ -51,21 +51,71 @@ for i in range(len(df_acc_log)):
         else:    
             sent.append(word)
     res.append(sent)
+    
+    
+
+# 피클 사용 저장
+import pickle
+import os
+
+Data_root = r"C:\Users\seoun\OneDrive\Desktop\Labs\LogData Project\Embedding\Data"
+
+with open(os.path.join(Data_root, "df_acc_log"),"wb") as file:    
+    pickle.dump(df_acc_log, file)    
+    
+with open(os.path.join(Data_root,"df_acc_log_tokenized"),"wb") as file:
+    pickle.dump(res, file)
+
+
+with open(os.path.join(Data_root,"df_acc_log_tokenized"),"rb") as file:
+    res = pickle.load(file)
+
+
+
 
 # 정수 인코딩
 from tensorflow.keras.preprocessing.text import Tokenizer
 tokenizer = Tokenizer(oov_token='OOV')
-tokenizer.fit_on_texts(sentences) # fit_on_texts()안에 코퍼스를 입력으로 하면 빈도수를 기준으로 단어 집합을 생성한다.
+tokenizer.fit_on_texts(res) # fit_on_texts()안에 코퍼스를 입력으로 하면 빈도수를 기준으로 단어 집합을 생성한다.
 
 print(tokenizer.word_index)
 
-tokenizer.texts_to_sequences(sentences)
+seq = tokenizer.texts_to_sequences(res)
+
+
+ratio = 0.8
+seq_train = seq[:int(len(seq)*ratio)]
+seq_test = seq[int(len(seq)*ratio):]
+
 
 '''
 vocab_size = 5
 tokenizer = Tokenizer(num_words = vocab_size + 2, oov_token = 'OOV') # 상위 5개 단어만 사용
 tokenizer.fit_on_texts(sentences)
 '''
+
+# 데이터 저장
+with open(os.path.join(Data_root, "df_acc_log_encoding"), "wb") as file:
+    pickle.dump(seq, file)
+
+with open(os.path.join(Data_root, "df_acc_log_train"), "wb") as file:
+    pickle.dump(seq_train, file)
+
+with open(os.path.join(Data_root, "df_acc_log_test"), "wb") as file:
+    pickle.dump(seq_test, file)
+
+
+# 데이터 로드 
+with open(os.path.join(Data_root, "df_acc_log_encoding"), "rb") as file:
+    seq = pickle.load(file)
+    
+with open(os.path.join(Data_root, "df_acc_log_train"), "rb") as file:
+    seq_train = pickle.load(file)
+    
+with open(os.path.join(Data_root, "df_acc_log_test"), "rb") as file:
+    seq_test = pickle.load(file)
+        
+
 
 
 # 워드 임베딩!

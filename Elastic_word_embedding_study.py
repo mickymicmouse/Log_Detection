@@ -36,7 +36,7 @@ df['dept_code'][df['dept_code']!="UNKNOWN"]
 
 # res 리스트에 각 로그의 데이터를 삽입하기
 # 2차원 데이터 형태
-# 임베딩 입력 데이터 형태로 변
+# 임베딩 입력 데이터 형태로 변환 
 res = []
 for i in range(len(df_acc_log)):
     line = df_acc_log.loc[i,:]
@@ -66,6 +66,8 @@ with open(os.path.join(Data_root, "df_acc_log"),"wb") as file:
 with open(os.path.join(Data_root,"df_acc_log_tokenized"),"wb") as file:
     pickle.dump(res, file)
 
+with open(os.path.join(Data_root,"df_acc_log"),"rb") as file:
+    df = pickle.load(file)
 
 with open(os.path.join(Data_root,"df_acc_log_tokenized"),"rb") as file:
     res = pickle.load(file)

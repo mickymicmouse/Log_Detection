@@ -12,6 +12,12 @@
 
 
 
+#### 모델 실행
+
+1. LSTM 모델 구현
+
+
+
 [관련 github](https://github.com/donglee-afar/logdeep)
 
 
@@ -23,20 +29,6 @@
 * sequential 벡터만 넣었을 경우
 
 ![image-20210415161203806](C:\Users\seoun\AppData\Roaming\Typora\typora-user-images\image-20210415161203806.png)
-
-
-
-
-
-각 슬라이딩 윈도우 된 것을 event2semantic.json을 사용해서 진행
-
-event2semantic.json = fasttext를 이용한 딕셔너리
-
-
-
-
-
-
 
 
 
@@ -62,9 +54,12 @@ event2semantic.json = fasttext를 이용한 딕셔너리
   ```
 
   * semantic
+    * 각 슬라이딩 윈도우 된 것을 event2semantic.json을 사용해서 진행
+      * event2semantic.json = fasttext를 이용한 딕셔너리
     * 문장 벡터를 활용하여 sequence vector 변환
     * [vector 생성](https://github.com/donglee-afar/logdeep/issues/3)
     * Facebook 오픈 소스 빠른 텍스트 사전 훈련된 단어 벡터 모델을 사용하여 Word 벡터를 추출하고 tf-idf 방법을 사용하여 로그에 대한 문장 벡터를 생성합니다(각 엔트에 해당).신분증).
+    * event2semantic.json 생성 코드
 
 ```python
 # -*- coding: utf-8 -*-

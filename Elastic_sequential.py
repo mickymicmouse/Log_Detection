@@ -49,3 +49,33 @@ with open(os.path.join(Data_root,"df_acc_log"),"rb") as file:
 
 with open(os.path.join(Data_root,"df_acc_log_tokenized"),"rb") as file:
     res = pickle.load(file)
+    
+    
+# 부서별 정렬
+dept_name = df_acc_log['dept_name'].unique()
+df_acc_log.sort_values(by=['dept_name'], inplace = True)
+df = df_acc_log[cols]
+
+with open(os.path.join(Data_root, "sorted_df_acc_log"), "wb") as file:
+    pickle.dump(df, file)
+    
+with open(os.path.join(Data_root, "sorted_df_acc_log"), "rb") as file:
+    df = pickle.load(file)
+
+# 부서별로 로그 분류
+dept_n = len(df_acc_log['dept_name'].unique())
+dept_dict= dict()
+for i in range(dept_n):
+    dept_dict[dept_name[i]]=[]
+    
+for idx in range(len(df)):
+    if idx%5000 == 0:
+        print("%d 번째 로그입니다" %idx)
+    dept_dict[df['dept_name'][i]].append(df.iloc[i])
+    
+
+with open(os.path.join(Data_root, "dept_dict"), "wb") as file:
+    pickle.dump(dept_dict, file)
+
+
+

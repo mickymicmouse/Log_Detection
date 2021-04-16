@@ -5,10 +5,10 @@
 
 
 
-* Deeplog log_key 모델 training 파트
-* predict 파트
 * URI 데이터로 이벤트아이디 구성
 * window_size별로 잘라서 다음 uri 예측
+* Deeplog log_key 모델 training 파트
+* predict 파트 (valid data에 대해서 슬라이딩 윈도우를 진행한뒤 예측 로그 도출해내는 것)
 
 
 

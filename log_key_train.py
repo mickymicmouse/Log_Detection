@@ -54,51 +54,57 @@ def generate(name, window_size, num_classes):
     return dataset
 
 
-
-# Load hyperparameters
-hparams = Hyperparameters()
-
-# Fix seed for reproducibility
-pl.seed_everything(hparams.seed)
-
-# Set dataset and dataloader
-train_dset = generate("df_acc_log_train", hparams.window_size, hparams.num_classes)
-train_loader = DataLoader(
-    train_dset, batch_size=hparams.batch_size, shuffle=True, pin_memory=True
-)
-
-# Set model
-model = DeepLog(
-    input_size=hparams.input_size,
-    hidden_size=hparams.hidden_size,
-    window_size=hparams.window_size,
-    num_layers=hparams.num_layers,
-    num_classes=hparams.num_classes,
-    lr=hparams.lr,
-)
-
-# Set training config
-early_stopping = EarlyStopping(
-    monitor="trn_loss", patience=3, strict=False, verbose=True, mode="min"
-)
-logger = TensorBoardLogger("logs", name="deeplog")
-checkpoint_callback = ModelCheckpoint(
-    monitor="trn_loss",
-    dirpath="deeplog/",
-    filename="checkpoint-{epoch:02d}-{trn_loss:.2f}",
-    save_top_k=3,
-    mode="min",
-)
-
-# Set trainer
-trainer = pl.Trainer(
-    # gpus=hparams.gpus,
+def main():
+    # Load hyperparameters
+    hparams = Hyperparameters()
     
-    deterministic=True,
-    logger=logger,
-    callbacks=[early_stopping, checkpoint_callback],
-    max_epochs=hparams.epoch,
-)
-
-# Train model
-trainer.fit(model, train_loader)
+    # Fix seed for reproducibility
+    pl.seed_everything(hparams.seed)
+    
+    # Set dataset and dataloader
+    train_dset = generate("uri_train", hparams.window_size, hparams.num_classes)
+    train_loader = DataLoader(
+        train_dset, batch_size=hparams.batch_size, shuffle=True, pin_memory=True
+    )
+    
+    valid_dset = generate("uri_valid", hparams.window_size, hparams.num_classes)
+    valid_loader = DataLoader(
+        valid_dset, batch_size=hparams.batch_size, shuffle=False, pin_memory=True
+    )
+    # Set model
+    model = DeepLog(
+        input_size=hparams.input_size,
+        hidden_size=hparams.hidden_size,
+        window_size=hparams.window_size,
+        num_layers=hparams.num_layers,
+        num_classes=hparams.num_classes,
+        lr=hparams.lr,
+    )
+    
+    # Set training config
+    early_stopping = EarlyStopping(
+        monitor="trn_loss", patience=3, strict=False, verbose=True, mode="min"
+    )
+    logger = TensorBoardLogger("logs", name="deeplog")
+    checkpoint_callback = ModelCheckpoint(
+        monitor="trn_loss",
+        dirpath="deeplog/",
+        filename="checkpoint-{epoch:02d}-{trn_loss:.2f}",
+        save_top_k=3,
+        mode="min",
+    )
+    
+    # Set trainer
+    trainer = pl.Trainer(
+        # gpus=hparams.gpus,
+        
+        deterministic=True,
+        logger=logger,
+        callbacks=[early_stopping, checkpoint_callback],
+        max_epochs=hparams.epoch,
+    )
+    # Train model
+    # trainer.fit(model, train_loader)
+    trainer.fit(model, train_loader, valid_loader)
+if __name__ == '__main__':
+    main()

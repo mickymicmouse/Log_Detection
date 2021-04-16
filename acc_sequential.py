@@ -52,8 +52,7 @@ with open(os.path.join(Data_root,"df_acc_log_tokenized"),"rb") as file:
     
     
 # 부서별 정렬
-dept_name = df_acc_log['dept_name'].unique()
-df_acc_log.sort_values(by=['dept_name'], inplace = True)
+df_acc_log.sort_values(by=['dept_name', 'str_time'], inplace = True)
 df = df_acc_log[cols]
 
 with open(os.path.join(Data_root, "sorted_df_acc_log"), "wb") as file:
@@ -62,20 +61,59 @@ with open(os.path.join(Data_root, "sorted_df_acc_log"), "wb") as file:
 with open(os.path.join(Data_root, "sorted_df_acc_log"), "rb") as file:
     df = pickle.load(file)
 
-# 부서별로 로그 분류
-dept_n = len(df_acc_log['dept_name'].unique())
-dept_dict= dict()
+
+# URI를 통한 이벤트 ID 만들기 
+# 총 427개의 URI 종류 존재
+# ID 427 은 OOV 값으로 설정 
+uri_n = len(df_acc_log['uri'].value_counts())
+dfvc = df_acc_log['uri'].value_counts()
+uri_unique = df_acc_log['uri'].unique()
+
+uri_dict = dict()
+for i in range(uri_n):
+    uri_dict[uri_unique[i]]=i
+uri_dict["OOV"]=uri_n
+
+
+event_id = []
+for i in range(len(df)):
+    if i%5000 == 0:
+        print("%d 로그입니다." %i)
+    event_id.append(uri_dict[df.iloc[i]['uri']])
+
+df.reset_index(drop=True, inplace=True)
+df['event_id']=pd.DataFrame(event_id)
+
+dept_name = df_acc_log['dept_name'].unique()
+dept_n = len(df['dept_name'].unique())
+dept_dict=dict()
 for i in range(dept_n):
     dept_dict[dept_name[i]]=[]
-    
+
 for idx in range(len(df)):
     if idx%5000 == 0:
         print("%d 번째 로그입니다" %idx)
-    dept_dict[df['dept_name'][i]].append(df.iloc[i])
-    
+    dept_dict[df['dept_name'][idx]].append(df.iloc[idx]['event_id'])
+
 
 with open(os.path.join(Data_root, "dept_dict"), "wb") as file:
     pickle.dump(dept_dict, file)
 
+uri_seq = []
+for k in dept_dict.keys():
+    uri_seq.append(dept_dict[k])
+
+with open(os.path.join(Data_root, "uri_seq"), "wb") as file:
+    pickle.dump(uri_seq, file)
+
+# train, valid 분할
+uri_train = uri_seq[:int(len(uri_seq))]
+uri_valid = uri_seq[int(len(uri_seq)):]
+
+with open(os.path.join(Data_root, "uri_train"), "wb") as file:
+    pickle.dump(uri_train, file)
+
+with open(os.path.join(Data_root, "uri_valid"), "wb") as file:
+    pickle.dump(uri_valid, file)
 
 

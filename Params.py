@@ -16,7 +16,7 @@ class Hyperparameters:
     lr = 0.001
 
     input_size = 1
-    num_classes = 42611
+    num_classes = 428
     num_layers = 2
     hidden_size = 64
     window_size = 10

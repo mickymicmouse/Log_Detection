@@ -79,3 +79,22 @@ class DeepLog(pl.LightningModule):
     def training_epoch_end(self, outputs):
         train_loss_mean = torch.stack([x["loss"] for x in outputs]).mean()
         self.log("trn_loss", train_loss_mean)
+        
+    # create valid function to get val_loss
+    def validation_step(self, batch, batch_idx):
+        seq, label = batch
+        seq = (
+            seq.clone()
+            .detach()
+            .view(-1, self.hparams.window_size, self.hparams.input_size)
+            .to(self.device)
+        )
+        output = self(seq)
+        loss = self.criterion(output, label)
+        return {"vloss":loss}
+    
+    def validation_epoch_end(self, outputs):
+        valid_loss_mean = torch.stack([x["vloss"] for x in outputs]).mean()
+        self.log("val_loss", valid_loss_mean)
+        
+    

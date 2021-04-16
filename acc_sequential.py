@@ -107,8 +107,9 @@ with open(os.path.join(Data_root, "uri_seq"), "wb") as file:
     pickle.dump(uri_seq, file)
 
 # train, valid 분할
-uri_train = uri_seq[:int(len(uri_seq))]
-uri_valid = uri_seq[int(len(uri_seq)):]
+ratio = 0.8
+uri_train = uri_seq[:int(len(uri_seq)*ratio)]
+uri_valid = uri_seq[int(len(uri_seq)*ratio):]
 
 with open(os.path.join(Data_root, "uri_train"), "wb") as file:
     pickle.dump(uri_train, file)

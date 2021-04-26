@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import os
-
+#%% 데이터 로드 및 변수 선택
 # 데이터 로드
 df_acc_log = pd.read_csv(r"C:\Users\seoun\OneDrive\Desktop\Labs\LogData Project\elasticData.csv", encoding= "utf8")
 
@@ -19,9 +19,11 @@ remove_cols=['Unnamed: 0', 'src_ip_long','end_time','was_ip','sg_keyword_reason_
              'logging_time_ui','str_time_ui','elapsed_time','logging_time','was_ip_long','download_check',
              'sg_multi_reason_bit','src_ip','sg_reason','was_country_lat','work_name','sys_crud_auth','was_trid',
              'sg_multi_reason','src_country_lat','security_grade','params','sys_id_auth','security_score',
-             'work_time', 'end_time_ui','str_time','sg_keyword_reason','keyword_count','sg_reason_bit','acc_luid']
+             'work_time', 'end_time_ui','sg_keyword_reason','keyword_count','sg_reason_bit','acc_luid']
 cols = list(set(col)-set(remove_cols))
+df = df_acc_log[cols]
 
+#%% 데이터 row String으로 합쳐보기(deprecated)
 
 # res 리스트에 각 로그의 데이터를 삽입하기
 # 2차원 데이터 형태
@@ -40,28 +42,13 @@ for i in range(len(df_acc_log)):
         else:    
             sent.append(word)
     res.append(sent)
-    
 
-Data_root = r"C:\Users\seoun\OneDrive\Desktop\Labs\LogData Project\Embedding\Data"
 
-with open(os.path.join(Data_root,"df_acc_log"),"rb") as file:
-    df_acc_log = pickle.load(file)
-
+# String으로 변환한 2차원 리스트 파일
 with open(os.path.join(Data_root,"df_acc_log_tokenized"),"rb") as file:
     res = pickle.load(file)
-    
-    
-# 부서별 정렬
-df_acc_log.sort_values(by=['dept_name', 'str_time'], inplace = True)
-df = df_acc_log[cols]
 
-with open(os.path.join(Data_root, "sorted_df_acc_log"), "wb") as file:
-    pickle.dump(df, file)
-    
-with open(os.path.join(Data_root, "sorted_df_acc_log"), "rb") as file:
-    df = pickle.load(file)
-
-
+#%% URL로 이벤트 ID 생성
 # URI를 통한 이벤트 ID 만들기 
 # 총 427개의 URI 종류 존재
 # ID 427 은 OOV 값으로 설정 
@@ -76,7 +63,7 @@ uri_dict["OOV"]=uri_n
 
 
 event_id = []
-for i in range(len(df)):
+for i in range(len(df_acc_log)):
     if i%5000 == 0:
         print("%d 로그입니다." %i)
     event_id.append(uri_dict[df.iloc[i]['uri']])
@@ -84,8 +71,79 @@ for i in range(len(df)):
 df.reset_index(drop=True, inplace=True)
 df['event_id']=pd.DataFrame(event_id)
 
-dept_name = df_acc_log['dept_name'].unique()
-dept_n = len(df['dept_name'].unique())
+# URL로 만든 event ID를 추가한 데이터 프레임 저장
+with open(os.path.join(Data_root, "url_event_id"), "wb") as file:
+    pickle.dump(df, file)
+
+
+
+#%% log entry 생성(부서별, 개인별, 직급별, 시간별)
+Data_root = r"C:\Users\seoun\OneDrive\Desktop\Labs\LogData Project\Embedding\Data"
+df_event_id = "url_event_id"
+# df_acc_log 데이터 프레임 800,000 + 23 cols + event id
+with open(os.path.join(Data_root, df_event_id),"rb") as file:
+    df = pickle.load(file)
+
+# 부서별 정렬
+df.sort_values(by=['dept_code', 'str_time'], inplace = True)
+
+with open(os.path.join(Data_root, "sorted_df_acc_log_dept_code"), "wb") as file:
+    pickle.dump(df, file)
+    
+with open(os.path.join(Data_root, "sorted_df_acc_log_dept_code"), "rb") as file:
+    df = pickle.load(file)
+print("부서별 정렬")
+    
+# 직급별 정렬
+with open(os.path.join(Data_root, df_event_id),"rb") as file:
+    df = pickle.load(file)
+    
+df.sort_values(by=['position_code', 'str_time'], inplace = True)
+
+with open(os.path.join(Data_root, "sorted_df_acc_log_position_code"), "wb") as file:
+    pickle.dump(df, file)
+    
+with open(os.path.join(Data_root, "sorted_df_acc_log_position_code"), "rb") as file:
+    df = pickle.load(file)
+print("직급별 정렬")
+
+# 개인별 정렬
+with open(os.path.join(Data_root, df_event_id),"rb") as file:
+    df = pickle.load(file)
+    
+df.sort_values(by=['user_id', 'str_time'], inplace = True)
+
+with open(os.path.join(Data_root, "sorted_df_acc_log_user_id"), "wb") as file:
+    pickle.dump(df, file)
+    
+with open(os.path.join(Data_root, "sorted_df_acc_log_user_id"), "rb") as file:
+    df = pickle.load(file)
+print("개인별 정렬")
+
+# 시간별 정렬
+with open(os.path.join(Data_root, df_event_id),"rb") as file:
+    df = pickle.load(file)
+    
+df.sort_values(by=['str_time'], inplace = True)
+
+with open(os.path.join(Data_root, "sorted_df_acc_log_time"), "wb") as file:
+    pickle.dump(df, file)
+    
+with open(os.path.join(Data_root, "sorted_df_acc_log_time"), "rb") as file:
+    df = pickle.load(file)
+print("시간별 정렬")
+
+
+
+#%% log entry & URL event id 파일 생성
+# log_entry 변수를 바꾸어서 진행(부서별(dept_code), 직급별(position_code), 개인별(user_id), 시간별)
+log_entry = "position_code"
+
+with open(os.path.join(Data_root, "sorted_df_acc_log_"+log_entry), "rb") as file:
+    df = pickle.load(file)
+
+dept_name = df_acc_log[log_entry].unique()
+dept_n = len(df_acc_log[log_entry].unique())
 dept_dict=dict()
 for i in range(dept_n):
     dept_dict[dept_name[i]]=[]
@@ -93,17 +151,13 @@ for i in range(dept_n):
 for idx in range(len(df)):
     if idx%5000 == 0:
         print("%d 번째 로그입니다" %idx)
-    dept_dict[df['dept_name'][idx]].append(df.iloc[idx]['event_id'])
-
-
-with open(os.path.join(Data_root, "dept_dict"), "wb") as file:
-    pickle.dump(dept_dict, file)
+    dept_dict[df[log_entry][idx]].append(df.iloc[idx]['event_id'])
 
 uri_seq = []
 for k in dept_dict.keys():
     uri_seq.append(dept_dict[k])
 
-with open(os.path.join(Data_root, "uri_seq"), "wb") as file:
+with open(os.path.join(Data_root, "uri_seq_"+log_entry), "wb") as file:
     pickle.dump(uri_seq, file)
 
 # train, valid 분할
@@ -111,10 +165,10 @@ ratio = 0.8
 uri_train = uri_seq[:int(len(uri_seq)*ratio)]
 uri_valid = uri_seq[int(len(uri_seq)*ratio):]
 
-with open(os.path.join(Data_root, "uri_train"), "wb") as file:
+with open(os.path.join(Data_root, "uri_train_"+log_entry), "wb") as file:
     pickle.dump(uri_train, file)
 
-with open(os.path.join(Data_root, "uri_valid"), "wb") as file:
+with open(os.path.join(Data_root, "uri_valid_"+log_entry), "wb") as file:
     pickle.dump(uri_valid, file)
 
 

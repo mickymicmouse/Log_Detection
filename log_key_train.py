@@ -83,13 +83,13 @@ def main():
     
     # Set training config
     early_stopping = EarlyStopping(
-        monitor="trn_loss", patience=3, strict=False, verbose=True, mode="min"
+        monitor="val_loss", patience=3, strict=False, verbose=True, mode="min"
     )
     logger = TensorBoardLogger("logs", name="deeplog")
     checkpoint_callback = ModelCheckpoint(
-        monitor="trn_loss",
+        monitor="val_loss",
         dirpath="deeplog/",
-        filename="checkpoint-{epoch:02d}-{trn_loss:.2f}",
+        filename="checkpoint-{epoch:02d}-{val_loss:.2f}",
         save_top_k=3,
         mode="min",
     )

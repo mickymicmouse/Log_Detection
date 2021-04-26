@@ -75,7 +75,7 @@ def main():
                 input_pred.append(predicted)
                 if label not in predicted:
                     FP += 1
-                    
+
     elapsed_time = time.time() - start_time
     with open ("/home/itm1/seungjun/log_key/result/inputed", "wb") as file:
         pickle.dump(inputed, file)

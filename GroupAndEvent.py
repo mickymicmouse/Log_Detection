@@ -113,7 +113,7 @@ print("시간별 정렬")
 # URI를 통한 이벤트 ID 만들기 
 # 총 427개의 URI 종류 존재
 # ID 427 은 OOV 값으로 설정
-log_entry = "position_name"
+log_entry = "dept_name"
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_"+log_entry), "rb") as file:
     df = pickle.load(file)
@@ -148,7 +148,7 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_eventID_"+log_entry), "wb")
 
 #%% log entry & URL event id 파일 생성
 # log_entry 변수를 바꾸어서 진행(부서별(dept_code), 직급별(position_code), 개인별(user_id))
-log_entry = "position_name"
+log_entry = "dept_name"
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_eventID_"+log_entry), "rb") as file:
     df = pickle.load(file)
@@ -173,12 +173,12 @@ with open(os.path.join(Data_root, "uri_seq_"+log_entry), "wb") as file:
     pickle.dump(uri_seq, file)
 
 #%% train, valid 분할
-log_entry = "position_name"
+log_entry = "dept_name"
 with open(os.path.join(Data_root, "uri_seq_"+log_entry), "rb") as file:
     uri_seq = pickle.load(file)
 
 nums = len(df)
-ratio = 0.7
+ratio = 0.8
 train_num = int(nums*ratio)
 
 # train과 valid의 개수를 비슷하게 맞추기 위함 

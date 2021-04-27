@@ -83,7 +83,7 @@ with open(os.path.join(Data_root, "url_event_id"), "wb") as file:
 
 #%% log entry 생성(부서별, 개인별, 직급별, 시간별)
 Data_root = r"C:\Users\seoun\OneDrive\Desktop\Labs\LogData Project\Embedding\Data"
-df_event_id = "df"
+df_event_id = "url_event_id"
 # df_acc_log 데이터 프레임 800,000 + 23 cols + event id
 with open(os.path.join(Data_root, df_event_id),"rb") as file:
     df = pickle.load(file)
@@ -99,7 +99,9 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_dept_name"), "rb") as file:
 print("부서이름별 정렬")
 
 
-# 부서별 정렬
+#%% 부서별 정렬
+with open(os.path.join(Data_root, df_event_id),"rb") as file:
+    df = pickle.load(file)
 df.sort_values(by=['dept_code', 'str_time'], inplace = True)
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_dept_code"), "wb") as file:
@@ -108,8 +110,25 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_dept_code"), "wb") as file:
 with open(os.path.join(Data_root, "sorted_df_acc_log_dept_code"), "rb") as file:
     df = pickle.load(file)
 print("부서별 정렬")
+   
+#%% 직급이름별 정렬
+with open(os.path.join(Data_root, df_event_id),"rb") as file:
+    df = pickle.load(file)
+with open(os.path.join(Data_root, df_event_id),"rb") as file:
+    df = pickle.load(file)
     
-# 직급별 정렬
+df.sort_values(by=['position_name', 'str_time'], inplace = True)
+
+with open(os.path.join(Data_root, "sorted_df_acc_log_position_name"), "wb") as file:
+    pickle.dump(df, file)
+    
+with open(os.path.join(Data_root, "sorted_df_acc_log_position_name"), "rb") as file:
+    df = pickle.load(file)
+print("직급이름별 정렬")
+ 
+#%% 직급별 정렬
+with open(os.path.join(Data_root, df_event_id),"rb") as file:
+    df = pickle.load(file)
 with open(os.path.join(Data_root, df_event_id),"rb") as file:
     df = pickle.load(file)
     
@@ -122,7 +141,8 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_position_code"), "rb") as f
     df = pickle.load(file)
 print("직급별 정렬")
 
-# 개인별 정렬
+
+#%% 개인별 정렬
 with open(os.path.join(Data_root, df_event_id),"rb") as file:
     df = pickle.load(file)
     
@@ -135,7 +155,7 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_user_sn"), "rb") as file:
     df = pickle.load(file)
 print("개인별 정렬")
 
-# 시간별 정렬
+#%% 시간별 정렬
 with open(os.path.join(Data_root, df_event_id),"rb") as file:
     df = pickle.load(file)
     
@@ -152,7 +172,7 @@ print("시간별 정렬")
 
 #%% log entry & URL event id 파일 생성
 # log_entry 변수를 바꾸어서 진행(부서별(dept_code), 직급별(position_code), 개인별(user_id))
-log_entry = "dept_name"
+log_entry = "user_sn"
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_"+log_entry), "rb") as file:
     df = pickle.load(file)
@@ -177,9 +197,12 @@ with open(os.path.join(Data_root, "uri_seq_"+log_entry), "wb") as file:
 
 #%%
 # train, valid 분할
-log_entry = "dept_name"
+log_entry = "dept_code"
 with open(os.path.join(Data_root, "uri_seq_"+log_entry), "rb") as file:
     uri_seq = pickle.load(file)
+
+# 정렬
+uri_seq.sort(key = len, reverse = True)
 
 nums = len(df)
 ratio = 0.7

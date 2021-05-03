@@ -96,6 +96,7 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_user_sn"), "rb") as file:
 print("개인별 정렬")
 
 #%% 시간별 정렬
+# 사실상 전체 데이터를 넣는 것
 with open(os.path.join(Data_root, "df"),"rb") as file:
     df = pickle.load(file)
     
@@ -113,7 +114,7 @@ print("시간별 정렬")
 # URI를 통한 이벤트 ID 만들기 
 # 총 427개의 URI 종류 존재
 # ID 427 은 OOV 값으로 설정
-log_entry = "dept_name"
+log_entry = "time"
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_"+log_entry), "rb") as file:
     df = pickle.load(file)
@@ -215,7 +216,28 @@ with open(os.path.join(Data_root, "uri_valid_user_sn"), "rb") as file:
 with open(os.path.join(Data_root, "uri_valid_position_code"), "rb") as file:
     valid4 = pickle.load(file)
 #%% log entry & URL event id 파일 생성
-# URL event id에 30분 시간으로 그룹화
+# 전체데이터(시간으로 sorting)에 대해 데이터 생성
 
+log_entry = "time"
+with open(os.path.join(Data_root, "sorted_df_acc_log_eventID_"+log_entry), "rb") as file:
+    df = pickle.load(file)
+
+uri_seq=[]
+for idx in range(len(df)):
+    if idx%5000 == 0:
+        print("%d 번째 로그입니다" %idx)
+    uri_seq.append(df.iloc[idx]['event_id'])
+
+nums = len(df)
+ratio=0.8
+train_num = int(nums*ratio)
+uri_train = [uri_seq[:train_num]]
+uri_valid = [uri_seq[train_num:]]
+
+with open(os.path.join(Data_root, "uri_train_"+log_entry), "wb") as file:
+    pickle.dump(uri_train, file)
+
+with open(os.path.join(Data_root, "uri_valid_"+log_entry), "wb") as file:
+    pickle.dump(uri_valid, file)
 
 

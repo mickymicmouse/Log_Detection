@@ -28,11 +28,40 @@ with open(os.path.join(Data_root, "df"), "wb") as file:
     pickle.dump(df, file)
 
 
+
+
+#%% unknown data 삭제 
+df_acc_log['dept_code'].value_counts()
+df_acc_log['dept_name'].value_counts()
+df_acc_log['position_code'].value_counts()
+df_acc_log['position_name'].value_counts()
+df_acc_log['user_sn'].value_counts()
+
+new_df_acc_log=[]
+for i in range(len(df_acc_log)):
+    if i % 5000 ==0:
+        print(i)
+    dept_code = df_acc_log.iloc[i]['dept_code']
+    if dept_code != "UNKNOWN":
+        new_df_acc_log.append(df_acc_log.iloc[i])
+new_df = pd.DataFrame(new_df_acc_log)
+
+with open(os.path.join(Data_root, "known_df"), "wb") as file:
+    pickle.dump(new_df, file)
+    
+new_df['dept_code'].value_counts()
+new_df['dept_name'].value_counts()
+new_df['position_code'].value_counts()
+new_df['position_name'].value_counts()
+new_df['user_sn'].value_counts()
+
 #%% 그룹화 - log entry 생성(부서별, 개인별, 직급별, 시간별)
-# 부서 이름별 정렬
+# 부서 이름별  (deprecated)
 with open(os.path.join(Data_root, "df"),"rb") as file:
     df = pickle.load(file)
-    
+
+# df = new_df.copy()
+
 df.sort_values(by=['dept_name', 'str_time'], inplace = True)
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_dept_name"), "wb") as file:
@@ -47,6 +76,8 @@ print("부서이름별 정렬")
 with open(os.path.join(Data_root, "df"),"rb") as file:
     df = pickle.load(file)
 
+# df = new_df.copy()
+
 df.sort_values(by=['dept_code', 'str_time'], inplace = True)
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_dept_code"), "wb") as file:
@@ -55,7 +86,7 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_dept_code"), "wb") as file:
 with open(os.path.join(Data_root, "sorted_df_acc_log_dept_code"), "rb") as file:
     df = pickle.load(file)
 print("부서별 정렬")
-#%% 직급이름별 정렬
+#%% 직급이름별 정렬 (deprecated)
 with open(os.path.join(Data_root, "df"),"rb") as file:
     df = pickle.load(file)
     
@@ -66,12 +97,14 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_position_name"), "wb") as f
     
 with open(os.path.join(Data_root, "sorted_df_acc_log_position_name"), "rb") as file:
     df = pickle.load(file)
-print("직급이별 정렬")
+print("직급이름 별 정렬")
 
 #%% 직급별 정렬
 with open(os.path.join(Data_root, "df"),"rb") as file:
     df = pickle.load(file)
-    
+
+# df = new_df.copy()
+
 df.sort_values(by=['position_code', 'str_time'], inplace = True)
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_position_code"), "wb") as file:
@@ -82,10 +115,12 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_position_code"), "rb") as f
 print("직급별 정렬")
 
 
-#%% 개인별 정렬
+#%% 개인별 정렬 
 with open(os.path.join(Data_root, "df"),"rb") as file:
     df = pickle.load(file)
     
+# df = new_df.copy()    
+
 df.sort_values(by=['user_sn', 'str_time'], inplace = True)
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_user_sn"), "wb") as file:
@@ -95,7 +130,7 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_user_sn"), "rb") as file:
     df = pickle.load(file)
 print("개인별 정렬")
 
-#%% 시간별 정렬
+#%% 시간별 정렬 (deprecated)
 # 사실상 전체 데이터를 넣는 것
 with open(os.path.join(Data_root, "df"),"rb") as file:
     df = pickle.load(file)
@@ -114,7 +149,7 @@ print("시간별 정렬")
 # URI를 통한 이벤트 ID 만들기 
 # 총 427개의 URI 종류 존재
 # ID 427 은 OOV 값으로 설정
-log_entry = "time"
+log_entry = "dept_name"
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_"+log_entry), "rb") as file:
     df = pickle.load(file)

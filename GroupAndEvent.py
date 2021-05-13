@@ -57,7 +57,7 @@ new_df['user_sn'].value_counts()
 
 #%% 그룹화 - log entry 생성(부서별, 개인별, 직급별, 시간별)
 # 부서 이름별  (deprecated)
-with open(os.path.join(Data_root, "df"),"rb") as file:
+with open(os.path.join(Data_root, "known_df"),"rb") as file:
     df = pickle.load(file)
 
 # df = new_df.copy()
@@ -73,7 +73,7 @@ print("부서이름별 정렬")
 
 
 #%% 부서코드별 정렬
-with open(os.path.join(Data_root, "df"),"rb") as file:
+with open(os.path.join(Data_root, "known_df"),"rb") as file:
     df = pickle.load(file)
 
 # df = new_df.copy()
@@ -87,7 +87,7 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_dept_code"), "rb") as file:
     df = pickle.load(file)
 print("부서별 정렬")
 #%% 직급이름별 정렬 (deprecated)
-with open(os.path.join(Data_root, "df"),"rb") as file:
+with open(os.path.join(Data_root, "known_df"),"rb") as file:
     df = pickle.load(file)
     
 df.sort_values(by=['position_name', 'str_time'], inplace = True)
@@ -100,7 +100,7 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_position_name"), "rb") as f
 print("직급이름 별 정렬")
 
 #%% 직급별 정렬
-with open(os.path.join(Data_root, "df"),"rb") as file:
+with open(os.path.join(Data_root, "known_df"),"rb") as file:
     df = pickle.load(file)
 
 # df = new_df.copy()
@@ -116,7 +116,7 @@ print("직급별 정렬")
 
 
 #%% 개인별 정렬 
-with open(os.path.join(Data_root, "df"),"rb") as file:
+with open(os.path.join(Data_root, "known_df"),"rb") as file:
     df = pickle.load(file)
     
 # df = new_df.copy()    
@@ -132,7 +132,7 @@ print("개인별 정렬")
 
 #%% 시간별 정렬 (deprecated)
 # 사실상 전체 데이터를 넣는 것
-with open(os.path.join(Data_root, "df"),"rb") as file:
+with open(os.path.join(Data_root, "known_df"),"rb") as file:
     df = pickle.load(file)
     
 df.sort_values(by=['str_time'], inplace = True)

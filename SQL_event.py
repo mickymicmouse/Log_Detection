@@ -74,7 +74,47 @@ with open(os.path.join(Data_root, "sorted_df_sql_log_user_name"), "wb") as file:
 with open(os.path.join(Data_root, "sorted_df_sql_log_user_name"), "rb") as file:
     df = pickle.load(file)
 print("부서별 정렬")
+#%% SQL 로 이벤트 ID 생성
+# SQL 를 통한 이벤트 ID 만들기 
+# 총 1995개 존재
 
+log_entry = "user_name"
+
+with open(os.path.join(Data_root, "sorted_df_sql_log_"+log_entry), "rb") as file:
+    df_sql_log = pickle.load(file)
+
+sql_value = df_sql_log["sql_syntax"].value_counts()
+total_n = len(df_sql_log)
+
+sql_unique = sql_value.keys()
+sql_n = len(sql_unique)
+
+
+sql_dict = dict()
+for i in range(sql_n):
+    sql_dict[sql_unique[i]]=i
+
+sql_dict["OOV"]=sql_n
+
+event_id = []
+keys = list(sql_dict.keys())
+for i in range(total_n):
+    if i%5000 == 0:
+        print("%d 로그입니다." %i)
+    sql_syn = df_sql_log.iloc[i]['sql_syntax']
+    if sql_syn in keys:
+        event_id.append(sql_dict[sql_syn])
+    else:
+        event_id.append(sql_dict['MOV'])
+
+
+df = df_sql_log.copy()
+df.reset_index(drop=True, inplace=True)
+df['event_id']=pd.DataFrame(event_id)
+
+# URL로 만든 event ID를 추가한 데이터 프레임 저장
+with open(os.path.join(Data_root, "sorted_df_sql_log_eventID_"+log_entry), "wb") as file:
+    pickle.dump(df, file)
 
 #%% SQL 로 이벤트 ID 생성
 # SQL 를 통한 이벤트 ID 만들기 
@@ -82,7 +122,7 @@ print("부서별 정렬")
 # n_min 을 통해 MOV로 넘길 sql 선정 
 # ID sql_n 은 MOV 값으로 설정 
 # ID sql_n +1 은 OOV 값으로 설정 
-# 50 -> 430 30 -> 544 
+# 50 -> class 321 = 319 + 1MOV + 1OOV
 
 log_entry = "user_name"
 

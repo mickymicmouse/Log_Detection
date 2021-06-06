@@ -11,7 +11,7 @@ import os
 #%% 데이터 로드 및 변수 선택
 # 데이터 로드
 Data_root = r"C:\Users\seoun\OneDrive\Desktop\Labs\LogData Project\Embedding\Data"
-df_acc_log = pd.read_csv(r"C:\Users\seoun\OneDrive\Desktop\Labs\LogData Project\elasticData.csv", encoding= "utf8")
+df_acc_log = pd.read_csv(r"C:\Users\seoun\Desktop\Labs\LogData Project\elasticData.csv", encoding= "utf8")
 
 # 변수 선택
 col = df_acc_log.columns

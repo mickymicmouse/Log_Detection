@@ -91,7 +91,7 @@ print("개인별 정렬")
 
 #%% str time을 event ID로 생성
 # class = 49 48time + 1OOV
-log_entry = "position_name"
+log_entry = "dept_name"
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_"+log_entry), "rb") as file:
     df = pickle.load(file)
@@ -107,13 +107,13 @@ import datetime as dt
 time_dict = dict()
 eventid=0
 for i in range(24):
-    for j in range(2):
+    for j in range(4):
         
-        minute = str(30*j)
+        minute = str(15*j)
         hour = str(i)
         time_dict[hour+":"+minute]=eventid
         eventid+=1
-time_dict["OOV"]=48
+time_dict["OOV"]=len(time_dict)
 
 event_id = []
 for i in range(len(df)):
@@ -124,10 +124,14 @@ for i in range(len(df)):
     t = t.split(":")
     hour = str(int(t[0]))
     minute = int(t[1])
-    if minute<30:
+    if minute>=0 and minute<15:
         minute = "0"
-    else:
+    elif minute >= 15 and minute<30:
+        minute = "15"
+    elif minute >= 30 and minute < 45:
         minute = "30"
+    else:
+        minute = "45"
     event_id.append(time_dict[hour+":"+minute])
 
 df.reset_index(drop=True, inplace=True)
@@ -139,7 +143,7 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_time_eventID_"+log_entry), 
     
 #%% log entry & time event id 파일 생성
 # log_entry 변수를 바꾸어서 진행(부서별(dept_code), 직급별(position_code), 개인별(user_id))
-log_entry = "position_name"
+log_entry = "dept_name"
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_time_eventID_"+log_entry), "rb") as file:
     df = pickle.load(file)
@@ -164,7 +168,7 @@ with open(os.path.join(Data_root, "time_seq_"+log_entry), "wb") as file:
     pickle.dump(uri_seq, file)
 
 #%% train, valid 분할
-log_entry = "position_name"
+log_entry = "dept_name"
 with open(os.path.join(Data_root, "time_seq_"+log_entry), "rb") as file:
     uri_seq = pickle.load(file)
 

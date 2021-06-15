@@ -91,7 +91,7 @@ print("개인별 정렬")
 
 #%% str time을 event ID로 생성
 # class = 49 48time + 1OOV
-log_entry = "dept_name"
+log_entry = "user_sn"
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_"+log_entry), "rb") as file:
     df = pickle.load(file)
@@ -143,7 +143,7 @@ with open(os.path.join(Data_root, "sorted_df_acc_log_time_eventID_"+log_entry), 
     
 #%% log entry & time event id 파일 생성
 # log_entry 변수를 바꾸어서 진행(부서별(dept_code), 직급별(position_code), 개인별(user_id))
-log_entry = "dept_name"
+#log_entry = "dept_code"
 
 with open(os.path.join(Data_root, "sorted_df_acc_log_time_eventID_"+log_entry), "rb") as file:
     df = pickle.load(file)
@@ -168,7 +168,7 @@ with open(os.path.join(Data_root, "time_seq_"+log_entry), "wb") as file:
     pickle.dump(uri_seq, file)
 
 #%% train, valid 분할
-log_entry = "dept_name"
+#log_entry = "dept_code"
 with open(os.path.join(Data_root, "time_seq_"+log_entry), "rb") as file:
     uri_seq = pickle.load(file)
 

@@ -46,5 +46,5 @@ from gensim.models import Word2Vec
 model = Word2Vec(sentences = tokenized_data, vector_size = 100, window =5, min_count =5, workers=4,sg=0)
 model.wv.vectors.shape
 model.wv.vectors
-model.wv.most_similar("사랑")
+model.wv.most_similar("행운")
 

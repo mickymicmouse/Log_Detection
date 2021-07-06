@@ -19,7 +19,7 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 urllib.request.urlretrieve(r"https://raw.githubusercontent.com/GaoleMeng/RNN-and-FFNN-textClassification/master/ted_en-20160408.xml", 
                            filename = "ted_en-20160408.xml")
 
-targetXML = open(r'C:\Users\seoun\OneDrive\Desktop\Labs\LogData Project\Embedding\ted_en-20160408.xml','r',encoding='UTF8')
+targetXML = open(r'C:\Users\seoun\Desktop\Labs\LogData Project\Embedding\ted_en-20160408.xml','r',encoding='UTF8')
 target_text = etree.parse(targetXML)
 
 # xml 파일로 부터 <content> </content> 사이의 내용 불러오기
